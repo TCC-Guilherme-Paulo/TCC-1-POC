@@ -1,0 +1,29 @@
+config:
+  target: http://localhost
+  phases:
+    - duration: 120           # Warm up: duração de 3 minutos (ajustável conforme necessário)
+      arrivalRate: 1          # Começa com 5 req/s
+      rampTo: 25              # Aumenta gradualmente até 50 req/s
+      name: 'warm-up'
+
+    - duration: 180           # Sustain load: duração de 5 minutos (ajustável)
+      arrivalRate: 70         # Mantém uma taxa estável de 50 req/s
+      name: 'sustain-load'
+
+    - duration: 120           # Spike: duração de 2 minutos
+      arrivalRate: 150        # Aumenta a taxa para 100 req/s
+      name: 'spike-load'
+
+    - duration: 120           # Ramp down: duração de 3 minutos para desaceleração
+      arrivalRate: 150        # Inicia com 50 req/s
+      rampTo: 0               # Reduz até 0 req/s gradualmente
+      name: 'ramp-down'
+  plugins:
+    metrics-by-endpoint:
+      useOnlyRequestNames: true
+  http:
+    timeout: 120
+scenarios:
+  - flow:
+    - get:
+        url: '/activities?id=66bada13e54403002078ab10&coords=-47.993931,-16.004896'
